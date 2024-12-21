@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import os
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -52,7 +53,9 @@ def create_app():
     @app.post("/generate")
     async def generate(msgs: Msgs):
         """Generates audio from text."""
+        start = time.monotonic()
         resp = await asyncio.to_thread(model_manager.generate, msgs)
-        return {"response": resp}
+        dur = time.monotonic() - start
+        return {"response": resp, "duration": dur}
 
     return app

@@ -8,25 +8,33 @@ from typing import BinaryIO, List, Literal, Union
 import librosa
 import soundfile
 import torch
-from transformers import Qwen2AudioForConditionalGeneration, Qwen2AudioProcessor
+from transformers import (
+    BitsAndBytesConfig,
+    Qwen2AudioConfig,
+    Qwen2AudioForConditionalGeneration,
+    Qwen2AudioProcessor,
+)
 from typing_extensions import TypedDict
 from xxhash import xxh3_64_hexdigest
 
 
 class TextPart(TypedDict):
     """MsgPart."""
+
     type: Literal["text"]
     text: str
 
 
 class AudioPart(TypedDict):
     """MsgPart."""
+
     type: Literal["audio"]
     audio_id: str
 
 
 class Msg(TypedDict):
     """Msg."""
+
     role: Literal["user", "assistant", "system"]
     content: Union[List[Union[TextPart, AudioPart]], str]
 
@@ -70,12 +78,30 @@ class ModelManager:
 
     def load_model(self):
         """Load the model."""
-        # TODO: Pray that the quantization backend works.
+        cfg: Qwen2AudioConfig = Qwen2AudioConfig.from_pretrained(
+            self.model_path, local_files_only=True
+        )
+        # cfg.max_position_embeddings = 8192
+        quant_cfg = BitsAndBytesConfig(
+            load_in_8bit=True,
+            # load_in_4bit=True,
+            # bnb_4bit_compute_dtype=torch.float16,
+        )
+
         self.processor = Qwen2AudioProcessor.from_pretrained(
-            self.model_path, local_files_only=True)
-        self.model = Qwen2AudioForConditionalGeneration.from_pretrained(
-            self.model_path, local_files_only=True, use_safetensors=True, device_map="auto")
-        self.model.eval()
+            self.model_path, local_files_only=True
+        )
+        model = Qwen2AudioForConditionalGeneration.from_pretrained(
+            self.model_path,
+            local_files_only=True,
+            config=cfg,
+            use_safetensors=True,
+            # torch_dtype="auto",
+            device_map="cuda",
+            quantization_config=quant_cfg,
+        )
+        # model = model.to("cuda")
+        self.model = model.eval()
 
     @torch.inference_mode()
     def generate(self, msgs: Msgs):
@@ -91,15 +117,21 @@ class ModelManager:
                         part["audio_url"] = f"PLACEHOLDER_{i}"
 
         text = self.processor.apply_chat_template(
-            msgs, add_generation_prompt=True, tokenize=False)
-        inputs = self.processor(text=text, audios=audios,
-                                padding=True, return_tensors="pt", sampling_rate=sr)
-        inputs.input_ids = inputs.input_ids.to("cuda")
-
+            msgs, add_generation_prompt=True, tokenize=False
+        )
+        inputs = self.processor(
+            text=text,
+            audios=audios,
+            padding=True,
+            return_tensors="pt",
+            sampling_rate=sr,
+        )
+        inputs = inputs.to("cuda")
         generate_ids = self.model.generate(**inputs, max_length=256)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
 
         response = self.processor.batch_decode(
-            generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+            generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False
+        )[0]
 
         return response
