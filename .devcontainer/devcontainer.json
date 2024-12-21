@@ -1,7 +1,7 @@
 // Format details: https://aka.ms/devcontainer.json
 // Custom Dockerfile: https://containers.dev/guide/dockerfile
 {
-  "name": "py-api-template",
+  "name": "wth-baymax",
 
   // https://github.com/devcontainers/templates/tree/main/src/ubuntu
   "image": "mcr.microsoft.com/devcontainers/base:jammy",
@@ -40,6 +40,11 @@
       "type": "volume",
       "source": "apt-cache",
       "target": "/var/cache/apt"
+    },
+    {
+      "type": "bind",
+      "source": "/home/jh/code/models/multi",
+      "target": "/workspaces/wth-baymax/models"
     }
   ],
 

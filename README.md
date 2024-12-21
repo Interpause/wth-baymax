@@ -1,4 +1,4 @@
-# py-api-template
+# wth-baymax
 
 Template for FastAPI-based API server. Features:
 
@@ -13,7 +13,7 @@ in Container Volume..." feature.
 
 ## Usage Instructions
 
-- Replace all instances of `py-api-template`. Optionally, rename `src` to a nicer name.
+- Replace all instances of `wth-baymax`. Optionally, rename `src` to a nicer name.
   - Tip: Rename the `src` folder first for auto-refactoring.
 
 ## Useful Commands
