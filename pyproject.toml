@@ -40,7 +40,7 @@ ipywebrtc = "*"
 [tool.poe.tasks]
 dev = { cmd = "python dev.py", use_exec = true }
 prod = "docker run --rm --gpus all -p 3000:3000 wth-baymax:latest"
-test = "echo Not Implemented Yet!"
+test = "uvicorn --host=0.0.0.0 --port=3333 --factory src:create_app"
 publish = "echo Not Implemented Yet!"
 requirements = "poetry export -o requirements.txt --without-hashes"
 

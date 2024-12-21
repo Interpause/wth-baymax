@@ -48,6 +48,8 @@
     }
   ],
 
+  "appPort": ["3333:3333"],
+
   // "runArgs": ["--shm-size=4G"],
   // "shutdownAction": "none",
 
