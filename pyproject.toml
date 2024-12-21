@@ -30,6 +30,7 @@ optional = true
 ipykernel = "*"
 ipympl = "*"
 ipywidgets = "*"
+ipywebrtc = "*"
 
 [tool.poe.tasks]
 dev = { cmd = "python dev.py", use_exec = true }

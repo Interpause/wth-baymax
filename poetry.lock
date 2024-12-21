@@ -868,6 +868,17 @@ test = ["packaging", "pickleshare", "pytest", "pytest-asyncio (<0.22)", "testpat
 test-extra = ["curio", "ipython[test]", "matplotlib (!=3.2.0)", "nbformat", "numpy (>=1.23)", "pandas", "trio"]
 
 [[package]]
+name = "ipywebrtc"
+version = "0.6.0"
+description = "WebRTC for Jupyter notebook/lab"
+optional = false
+python-versions = "*"
+files = [
+    {file = "ipywebrtc-0.6.0-py2.py3-none-any.whl", hash = "sha256:01a6c9d79ab937c280ce4635a149c7b681457e99ea779c00c7a6aa44ee6916f8"},
+    {file = "ipywebrtc-0.6.0.tar.gz", hash = "sha256:f8ac3cc02b3633b59f388aef67961cff57f90028fd303bb3886c63c3d631da13"},
+]
+
+[[package]]
 name = "ipywidgets"
 version = "8.1.5"
 description = "Jupyter interactive widgets"
@@ -3374,4 +3385,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.13,>=3.10"
-content-hash = "4650572f6f99a23a4d152138099d7acce99960bb9760d0e23842beb9ca1d717a"
+content-hash = "09fb54aced8e292afbd6018a2a35ee3ec0d67eb858fe4aaf27c1ca5d6ccebf3a"
